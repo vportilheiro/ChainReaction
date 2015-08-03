@@ -48,6 +48,9 @@ public:
 	/* Deallocates memory associated with the board */
 	~ChainReaction();
 
+	/* Returns pointer to player whose turn it is */
+	Player* currentPlayer();
+
 	/* Returns whether the game is over */
 	bool gameOver() const;
 
@@ -96,6 +99,10 @@ private:
 	 * moves for each player, in order to make searching for optimal plays
 	 * more efficient, not having to re-calculate the valid moves each time. */
 	PlayerDataMapT playerData;
+
+	/* Index of current player in the data map, used by currentPlayer() function
+	 * to find and return pointer to the actual player whose turn it is */
+	int currentPlayerIdx;
 
 	/* Adds a ball of the given player to the node, and calculates any resulting
 	 * chain reactions */

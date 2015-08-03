@@ -80,10 +80,12 @@ int main() {
 		/* Loop that runs the game. Will get a command from the player,
 		 * which is either an in-bounds location to place a ball,
 		 * or a command to quit. */
-		int currentPlayerNum = 0;
+		//int currentPlayerNum = 0;
+		Player* currentPlayer;
 		bool gameQuit = false;
 		while (!game.gameOver()) {
-			Player* currentPlayer = playerList[currentPlayerNum];
+			//Player* currentPlayer = playerList[currentPlayerNum];
+			currentPlayer = game.currentPlayer();
 			Command command = getCommand(currentPlayer);
 			if (command.type == Command::QUIT) {
 				gameQuit = true;
@@ -96,7 +98,7 @@ int main() {
 				int col = command.col;
 				if (currentPlayer->move(row, col, game)) {
 					std::cout << "Placed ball." << std::endl;
-					currentPlayerNum = (currentPlayerNum + 1) % game.numberOfPlayers();
+					//currentPlayerNum = (currentPlayerNum + 1) % game.numberOfPlayers();
 					std::cout << game << std::endl;
 				} else {
 					std::cout << "Invalid move. Try again." << std::endl;
@@ -106,8 +108,10 @@ int main() {
 		if (gameQuit) {
 			std::cout << "The game was quit." << std::endl;
 		} else {
-			congradulatePlayer(playerList[currentPlayerNum]);
-			playerList[currentPlayerNum]->win();
+			//congradulatePlayer(playerList[currentPlayerNum]);
+			//playerList[currentPlayerNum]->win();
+			congradulatePlayer(currentPlayer);
+			currentPlayer->win();
 		}
 		printScores(playerList);
 		if (!playAgain()) {

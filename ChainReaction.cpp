@@ -16,6 +16,7 @@
 ChainReaction::ChainReaction(int rows, int cols, 
 							 const std::vector<Player*>& playerList, bool colors) :
 							 rows(rows), cols(cols), colorsEnabled(colors),
+							 currentPlayerIdx(0),
 							 playerData(initPlayerData(playerList)) {
 
 	/* Create grid of empty Nodes */
@@ -50,6 +51,14 @@ ChainReaction::~ChainReaction() {
 		}
 	}
 	delete nodeGrid;
+}
+
+/* Gets pointer to current player by using the index of the player
+ * in the player data map */
+Player* ChainReaction::currentPlayer() {
+	auto playerIt = playerData.begin();
+	std::advance(playerIt, currentPlayerIdx);
+	return playerIt->first;
 }
 
 /* Returns whether the game is over, by checking how many players are left */
@@ -163,6 +172,7 @@ void ChainReaction::updatePlayers() {
 			++it;
 		}
 	}
+	currentPlayerIdx = (currentPlayerIdx + 1) % numberOfPlayers();
 }
 
 
