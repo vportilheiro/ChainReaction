@@ -190,18 +190,13 @@ bool ChainReaction::isValidMove(int row, int col, Player const* player) const {
 /* Removes any players with no balls on the board after the first move
  * from the playerData. Sets the winner if only one player left. */
 void ChainReaction::updatePlayers() {
-	std::cout << "Checking players..." << std::endl;
 	for (std::map<Player*, PlayerData>::iterator it = playerData.begin();
 		 it != playerData.end();) {
 		Player* player = it->first;
-		std::cout << "Player: " << player << std::endl;
 		PlayerData& data = it->second;
-		std::cout << "\tData:\t" << data.firstMove << "\t" << data.numberOfBalls  << std::endl;
 		if (!data.firstMove && data.numberOfBalls == 0) {
-			std::cout << "Conditiions to remove player met." << std::endl;
 			playerData.erase(it++);
 		} else {
-			std::cout << "Conditiions to remove player not met." << std::endl;
 			++it;
 		}
 	}
