@@ -22,6 +22,10 @@ struct Node {
 		player = nullptr;
 	}
 
+	/* Copy constructor */
+	Node(Node& node) : numberOfBalls(node.numberOfBalls),
+					   player(node.player) {}
+
 	/* List of adjacent nodes */
 	std::vector<Node*> nextList;
 

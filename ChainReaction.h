@@ -36,7 +36,14 @@
 
 static const bool BOLD_CAPACITY = true;
 
+/* AIPlayer class is given friend access to game,
+ * in order to evaluate positions */
+class AIPlayer;
+
 class ChainReaction {
+
+	friend class AIPlayer;
+
 public:
 
 	/* Constructor initializes the board, and thus takes the number
@@ -44,6 +51,9 @@ public:
 	 * copy locally. */
 	ChainReaction(int rows, int cols, const std::vector<Player*>& playerList,
 				  bool colorsEnabled = false);
+
+	//TODO: make deep copy constructor
+	ChainReaction(ChainReaction& game);
 
 	/* Deallocates memory associated with the board */
 	~ChainReaction();
@@ -62,6 +72,15 @@ public:
 	 * case if the position is out of bounds, or the player may not place the
 	 * ball at the position, do to there already being another player's balls there. */
 	bool playerMove(int row, int col, Player* player);
+
+	/* Return number of rows in board */
+	int getRows();
+
+	/* Return number of columns in board */
+	int getCols();
+
+	/* Return current state of "winner" variable */
+	Player* getWinner();
 
 	friend std::ostream& operator <<(std::ostream& out,
 									 const ChainReaction& game);
@@ -82,6 +101,11 @@ private:
 	/* Array representing the board, which contains pointers to the corresponding
 	 * nodes at each location. */
 	Node** nodeGrid;
+
+	/* Stores the winner of a game. Null while the game is still being played,
+	 * or if the game ends in a tie (at the moment, it is uncertain whether this
+	 * is possible. */
+	Player* winner;
 
 	/* Structure to keep track of player specific data, such the number of balls
 	 * any player has on the board, and whether it's a player's first move */

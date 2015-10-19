@@ -16,15 +16,25 @@
 struct Position {
 	Position(int row, int col) : row(row), col(col) {}
 	Position() : Position(-1,-1) {}
+
+	void set(int row, int col) {
+		row = row;
+		col = col;
+	}
+
 	int row;
 	int col;
 };
 
-class AIPlayer : Player {
+/* Maximum depth of move search space */
+const int DEPTH = 10;
+
+class AIPlayer : public Player {
 public:
 
 	/* Constructor */
 	//AIPlayer(){}
+	using Player::Player;
 
 	/* Desctructor */
 	~AIPlayer(){}
@@ -38,7 +48,11 @@ private:
 	/* Recursive alpha-beta pruned minimax search, takes the information from the public
 	 * helper funciton, the player's whose turn is being examined and a Position which,
 	 * it modifies with the best available move */
-	void alphaBeta(Player* current, ChainReaction game, int alpha, int beta, Position& bestMove);
+	int alphaBeta(ChainReaction& game, int alpha, int beta,
+				   int depth, Position& bestMove);
+
+	/* Returns the heuristic value of a given game state */
+	int gameValue(const ChainReaction& game);
 
 };
 

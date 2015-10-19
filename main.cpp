@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 
+#include "AIPlayer.h"
 #include "ChainReaction.h"
 #include "colormod.h"
 #include "Command.h"
@@ -80,12 +81,9 @@ int main() {
 		/* Loop that runs the game. Will get a command from the player,
 		 * which is either an in-bounds location to place a ball,
 		 * or a command to quit. */
-		//int currentPlayerNum = 0;
-		Player* currentPlayer;
 		bool gameQuit = false;
 		while (!game.gameOver()) {
-			//Player* currentPlayer = playerList[currentPlayerNum];
-			currentPlayer = game.currentPlayer();
+			Player* currentPlayer = game.currentPlayer();
 			Command command = getCommand(currentPlayer);
 			if (command.type == Command::QUIT) {
 				gameQuit = true;
@@ -98,7 +96,6 @@ int main() {
 				int col = command.col;
 				if (currentPlayer->move(row, col, game)) {
 					std::cout << "Placed ball." << std::endl;
-					//currentPlayerNum = (currentPlayerNum + 1) % game.numberOfPlayers();
 					std::cout << game << std::endl;
 				} else {
 					std::cout << "Invalid move. Try again." << std::endl;
@@ -108,10 +105,8 @@ int main() {
 		if (gameQuit) {
 			std::cout << "The game was quit." << std::endl;
 		} else {
-			//congradulatePlayer(playerList[currentPlayerNum]);
-			//playerList[currentPlayerNum]->win();
-			congradulatePlayer(currentPlayer);
-			currentPlayer->win();
+			congradulatePlayer(game.getWinner());
+			game.getWinner()->win();
 		}
 		printScores(playerList);
 		if (!playAgain()) {
@@ -218,7 +213,14 @@ void getPlayers(std::vector<Player*>& playerList) {
 		//TODO: fix default case -- hangs
 		if (name == "")
 			name = "Player " + integerToString(i + 1);
-		Player* player = new Player(name);
+		/* Prompt user for whether the player is to be an AI */
+		bool isAI = getYesOrNo("Make player AI? (y/n) ", "");
+		Player* player;
+		if (isAI) {
+			player = new AIPlayer(name);
+		} else {
+			player = new Player(name);
+		}
 		/* If color flag is on, enable player's color */
 		if (COLOR) {
 			Color::Code color = Color::colorFromInt(i + 1);

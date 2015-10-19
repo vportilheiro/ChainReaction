@@ -42,6 +42,19 @@ ChainReaction::ChainReaction(int rows, int cols,
 	}
 }
 
+/* Copy constructor */
+ChainReaction::ChainReaction(ChainReaction& game) : rows(game.rows), cols(game.cols),
+													colorsEnabled(game.colorsEnabled),
+													currentPlayerIdx(game.currentPlayerIdx),
+													playerData(game.playerData) {
+	nodeGrid = new Node*[rows * cols];
+	for (int row = 0; row < rows; ++row) {
+		for (int col = 0; col < cols; ++col) {
+			nodeGrid[index(row, col)] = game.nodeGrid[game.index(row, col)];
+		}
+	}
+}
+
 /* Destructor will deallocation memory associated with the board */
 ChainReaction::~ChainReaction() {
 	/* Delete nodes */
@@ -89,6 +102,21 @@ bool ChainReaction::playerMove(int row, int col, Player* player) {
 	return false;
 }
 
+/* Return number of rows */
+int ChainReaction::getRows() {
+	return rows;
+}
+
+/* Return number of columns */
+int ChainReaction::getCols() {
+	return cols;
+}
+
+/* Return winner when game is over, or null. */
+Player* ChainReaction::getWinner() {
+	return winner;
+}
+
 /* ===== Private Functions =====*/
 
 /* Adds a ball of the given player to the node, and calculates any
@@ -107,8 +135,8 @@ void ChainReaction::addBallToNode(Node* node, Player* player) {
  * capturing the given node. */
 void ChainReaction::captureNode(Node* node, Player* capturingPlayer) {
 	int changedBalls = node->numberOfBalls;
-	--(playerData[node->player].numberOfBalls);
-	++(playerData[capturingPlayer].numberOfBalls);
+	playerData[node->player].numberOfBalls -= changedBalls;
+	playerData[capturingPlayer].numberOfBalls += changedBalls;
 	node->player = capturingPlayer;
 }
 
@@ -160,19 +188,26 @@ bool ChainReaction::isValidMove(int row, int col, Player const* player) const {
 }
 
 /* Removes any players with no balls on the board after the first move
- * from the playerData */
+ * from the playerData. Sets the winner if only one player left. */
 void ChainReaction::updatePlayers() {
+	std::cout << "Checking players..." << std::endl;
 	for (std::map<Player*, PlayerData>::iterator it = playerData.begin();
 		 it != playerData.end();) {
 		Player* player = it->first;
+		std::cout << "Player: " << player << std::endl;
 		PlayerData& data = it->second;
+		std::cout << "\tData:\t" << data.firstMove << "\t" << data.numberOfBalls  << std::endl;
 		if (!data.firstMove && data.numberOfBalls == 0) {
+			std::cout << "Conditiions to remove player met." << std::endl;
 			playerData.erase(it++);
 		} else {
+			std::cout << "Conditiions to remove player not met." << std::endl;
 			++it;
 		}
 	}
 	currentPlayerIdx = (currentPlayerIdx + 1) % numberOfPlayers();
+	if (gameOver())
+		winner = currentPlayer();
 }
 
 
